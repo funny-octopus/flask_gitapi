@@ -88,7 +88,7 @@ def issues(username, repo):
     else:
         json_ = {'status':'error', 'message':'Method not supported'}
     response = make_response(jsonify(json_))
-    response.headers['Content-Type'] = 'bp.ication/json'
+    response.headers['Content-Type'] = 'application/json'
     return response, 200
 
 
