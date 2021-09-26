@@ -95,6 +95,7 @@ def issues(username, repo):
 @bp.route('/repos/<username>/<repo>/forks', methods=['GET',])
 def forks(username, repo):
     if request.method == 'GET':
+        a = b/0
         try:
             res = req.get(f"{API_URL}/repos/{username}/{repo}/forks")
         except RequestException:
