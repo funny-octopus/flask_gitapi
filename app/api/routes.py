@@ -8,7 +8,7 @@ from datetime import datetime
 API_URL = "https://api.github.com"
 
 
-@bp.route('/repos/<username>/<repo>', methods=['GET',])
+@bp.route('/repos/<username>/<repo>', methods=['GET','POST','PUT','DELETE'])
 def details(username, repo):
     if request.method == 'GET':
         try:
@@ -30,7 +30,7 @@ def details(username, repo):
     return response, 200
 
 
-@bp.route('/repos/<username>/<repo>/pulls', methods=['GET',])
+@bp.route('/repos/<username>/<repo>/pulls', methods=['GET','POST','PUT','DELETE'])
 def pulls(username, repo):
     if request.method == 'GET':
         period = request.args.get('period', '')
@@ -67,7 +67,7 @@ def pulls(username, repo):
     return response, 200
 
 
-@bp.route('/repos/<username>/<repo>/issues', methods=['GET',])
+@bp.route('/repos/<username>/<repo>/issues', methods=['GET','POST','PUT','DELETE'])
 def issues(username, repo):
     if request.method == 'GET':
         try:
@@ -92,10 +92,9 @@ def issues(username, repo):
     return response, 200
 
 
-@bp.route('/repos/<username>/<repo>/forks', methods=['GET',])
+@bp.route('/repos/<username>/<repo>/forks', methods=['GET','POST','PUT','DELETE'])
 def forks(username, repo):
     if request.method == 'GET':
-        a = b/0
         try:
             res = req.get(f"{API_URL}/repos/{username}/{repo}/forks")
         except RequestException:
