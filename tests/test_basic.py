@@ -1,6 +1,5 @@
 import os
 import sys
-sys.path.append('.')
 import unittest
 from app import create_app
 from config import TestConfig
@@ -18,7 +17,12 @@ class BasicTestCase(unittest.TestCase):
     def test_wrong_url(self):
         response = self.client.get('/wrong/url')
         self.assertIn(b'Not Found Error', response.data)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
+
+    def test_wrong_method(self):
+        response = self.client.put('/repos/{USERNAME}/{REPO}')
+        self.assertIn(b'Method Not Allowed', response.data)
+        self.assertEqual(response.status_code, 405)
 
     def test_details(self):
         response = self.client.get(f'/repos/{USERNAME}/{REPO}')
@@ -40,12 +44,8 @@ class BasicTestCase(unittest.TestCase):
         self.assertIn(b'\"status\":\"ok\"', response.data)
         self.assertEqual(response.status_code, 200)
 
-    def test_wrong_method(self):
-        response = self.client.put('/repos/{USERNAME}/{REPO}')
-        self.assertIn(b'Method not supported', response.data)
-        self.assertEqual(response.status_code, 200)
 
-
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
+#    
 

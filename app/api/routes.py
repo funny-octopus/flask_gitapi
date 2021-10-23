@@ -8,8 +8,10 @@ from datetime import datetime
 API_URL = "https://api.github.com"
 
 
-@bp.route('/repos/<username>/<repo>', methods=['GET','POST','PUT','DELETE'])
+@bp.route('/repos/<username>/<repo>', methods=['GET',])
 def details(username, repo):
+    """ API repo """
+
     if request.method == 'GET':
         try:
             res = req.get(f"{API_URL}/repos/{username}/{repo}")
@@ -18,20 +20,21 @@ def details(username, repo):
                          'message':'github.com is unreachable!'}
         else:
             res_json = res.json()
-            if res_json.get('message'):
-                json_ = {'status':'error',\
-                         'message':'Invalid username or repo'}
-            else:
+            if res.ok:
                 json_ = {'status':'ok', 'result':res_json}
-    else:
-        json_ = {'status':'error', 'message':'Method not supported'}
+            else:
+                message = res_json.get('message')
+                json_ = {'status':'error',\
+                         'message':message}
     response = make_response(jsonify(json_))
     response.headers['Content-Type'] = 'application/json'
-    return response, 200
+    return response
 
 
-@bp.route('/repos/<username>/<repo>/pulls', methods=['GET','POST','PUT','DELETE'])
+@bp.route('/repos/<username>/<repo>/pulls', methods=['GET',])
 def pulls(username, repo):
+    """ API pulls """
+
     if request.method == 'GET':
         period = request.args.get('period', '')
         period = period if period.isdigit() else '0'
@@ -42,10 +45,7 @@ def pulls(username, repo):
                          'message':'github.com is unreachable!'}
         else:
             res_json = res.json()
-            if isinstance(res_json, dict) and\
-                    res_json.get('message') == 'Not Found':
-                json_ = {'status':'error', 'message':'Invalid username or repo'}
-            else:
+            if res.ok:
                 result = []
                 now = datetime.now()
                 for pull_request in res_json:
@@ -60,15 +60,16 @@ def pulls(username, repo):
                                 delta.days > int(period):
                             result.append(pull_request['html_url'])
                 json_ = {'status':'ok', 'result':result}
-    else:
-        json_ = {'status':'error', 'message':'Method not supported'}
+            else:
+                json_ = {'status':'error', 'message':'Invalid username or repo'}
     response = make_response(jsonify(json_))
     response.headers['Content-Type'] = 'application/json'
-    return response, 200
+    return response
 
 
-@bp.route('/repos/<username>/<repo>/issues', methods=['GET','POST','PUT','DELETE'])
+@bp.route('/repos/<username>/<repo>/issues', methods=['GET',])
 def issues(username, repo):
+    """ API  issues """
     if request.method == 'GET':
         try:
             res = req.get(f"{API_URL}/repos/{username}/{repo}/issues")
@@ -77,23 +78,21 @@ def issues(username, repo):
                          'message':'github.com is unreachable!'}
         else:
             res_json = res.json()
-            if isinstance(res_json, dict) and\
-                    res_json.get('message') == 'Not Found':
-                json_ = {'status':'error', 'message':'Invalid username or repo'}
-            else:
+            if res.ok:
                 result = []
                 for issue in res_json:
                     result.append(issue['html_url'])
                 json_ = {'status':'ok', 'result':result}
-    else:
-        json_ = {'status':'error', 'message':'Method not supported'}
+            else:
+                json_ = {'status':'error', 'message':'Invalid username or repo'}
     response = make_response(jsonify(json_))
     response.headers['Content-Type'] = 'application/json'
-    return response, 200
+    return response
 
 
 @bp.route('/repos/<username>/<repo>/forks', methods=['GET','POST','PUT','DELETE'])
 def forks(username, repo):
+    """ API forks """
     if request.method == 'GET':
         try:
             res = req.get(f"{API_URL}/repos/{username}/{repo}/forks")
@@ -102,17 +101,14 @@ def forks(username, repo):
                          'message':'github.com is unreachable!'}
         else:
             res_json = res.json()
-            if isinstance(res_json, dict) and\
-                    res_json.get('message') == 'Not Found':
-                json_ = {'status':'error', 'message':'Invalid username or repo'}
-            else:
+            if res.ok:
                 result = []
                 for fork in res_json:
                     result.append(fork['html_url'])
                 json_ = {'status':'ok', 'result':result}
-    else:
-        json_ = {'status':'error', 'message':'Method not supported'}
+            else:
+                json_ = {'status':'error', 'message':'Invalid username or repo'}
     response = make_response(jsonify(json_))
     response.headers['Content-Type'] = 'application/json'
-    return response, 200
+    return response
 
